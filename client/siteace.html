@@ -1,0 +1,177 @@
+<head>
+    <title>Site Ace</title>
+</head>
+<body>
+</body>
+
+<template name="ApplicationLayout">
+    {{> navbar}}
+    {{> yield "main"}}
+</template>
+
+<template name="navbar">
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Site Ace</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+            </ul>
+            <p id="signin" class="navbar-text navbar-right">Welcome {{> loginButtons}}</p>
+            <div class="navbar-form navbar-right" role="search">
+                <a href="" class="js-clear-search">Clear</a>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control js-input-search" placeholder="Search">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default js-search" type="button"><span class="glyphicon glyphicon-search"></span></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</template>
+
+<template name="sites">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="pull-right">{{> website_form}}</div>
+                <blockquote>
+                    <h3>Share, discuss and rate pages you find interesting on the internet.</h3>
+                </blockquote>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                {{> website_list}}
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="website_form">
+    {{#if currentUser}}
+        <button class="btn btn-primary js-toggle-website-form">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            Add Site
+        </button>
+    {{/if}}
+    <div id="website_form" class="modal fade">
+        <div class="modal-dialog">
+            <form class="js-save-website-form">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="alert alert-danger" role="alert">Error message goes here</div>
+                        <div class="form-group">
+                            <label for="url">Site address</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="url" placeholder="http://www.mysite.com">
+                                <span class="input-group-btn"><button class="btn btn-default js-check-url" type="button">Go!</button></span>
+                            </div>
+                            <span class="help-block">Click 'Go!' to fetch the website title and description (if available).</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <input type="text" class="form-control" name="title" placeholder="Mysite">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <input type="text" class="form-control" name="description" placeholder="I found this site really useful for ...">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default">Submit</button>
+                        <button class="btn btn-warning" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</template>
+
+<!-- template that displays several website items -->
+<template name="website_list">
+    <ol>
+        {{#each websites}}
+            {{>website_item}}
+        {{/each}}
+    </ol>
+</template>
+
+<!-- template that displays individual website entries -->
+<template name="website_item">
+    <li class="website-item">
+        <div>
+            {{#if votingAllowed}}
+                <button class="btn btn-default js-downvote pull-right" title="Vote Down">
+                    <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
+                    <span class="badge">{{votesDown}}</span>
+                </button>
+                <button class="btn btn-default js-upvote pull-right" title="Vote Up">
+                    <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+                    <span class="badge">{{votesUp}}</span>
+                </button>
+            {{else}}
+                <a class="pull-right">
+                    <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
+                    <span class="badge">{{votesDown}}</span>
+                </a>
+                <a class="pull-right">
+                    <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+                    <span class="badge">{{votesUp}}</span>
+                </a>
+            {{/if}}
+            <h3><a href="/site/{{_id}}">{{title}}</a></h3>
+            <p>{{description}}</p>
+            <p>Added by <i>{{getUser createdBy}}</i> on {{formatTime createdOn}}.</p>
+            <hr>
+        </div>
+    </li>
+</template>
+
+<template name="site_details">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <h2>{{title}}</h2>
+                <p><a href="{{url}}" target="_blank">{{url}}</a></p>
+                <p>{{description}}</p>
+                {{#if currentUser}}
+                    {{> comment_form}}
+                {{/if}}
+            </div>
+        </div>
+        <hr>
+        {{#each comments}}
+            <div class="row">
+                <div class="col-sm-12">
+                    {{> site_comment}}
+                </div>
+            </div>
+        {{/each}}
+    </div>
+</template>
+
+<template name="comment_form">
+    <button class="btn btn-default js-toggle-comment-form">Add Comment</button>
+    <div id="comment_form" class="hidden_div">
+        <form class="form-inline js-post-comment-form">
+            <input type="text" class="form-control" name="comment" placeholder="" style="width: 75%">
+            <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+    </div>
+</template>
+
+<template name="site_comment">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Posted on {{formatTime postedOn}} by <i>{{getUser postedBy}}</i>
+        </div>
+        <div class="panel-body">
+            {{comment}}
+        </div>
+    </div>
+</template>

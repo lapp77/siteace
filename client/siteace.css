@@ -1,0 +1,39 @@
+/* CSS declarations go here */
+body {
+    padding-top: 60px;
+}
+
+h3 {
+    margin-top: 0;
+}
+
+.hidden_div {
+    display: none;
+}
+
+#login-dropdown-list {
+    top: 5px;
+    right: 0;
+    left: auto;
+}
+
+#signin {
+    margin-right: 0;
+}
+
+li.website-item {
+    position: relative;
+    margin-bottom: 1em;
+}
+
+a.pull-right {
+    margin-left: 1em;
+}
+
+#comment_form {
+    margin: 0.5em 0;
+}
+
+blockquote {
+    margin-bottom: 20px;
+}
